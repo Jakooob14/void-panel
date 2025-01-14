@@ -1,101 +1,163 @@
+'use client'
+
+import {FormEvent, ReactNode, useEffect, useState} from "react";
+import axios from "axios";
+import Link from "next/link";
+import {FaDownload} from "react-icons/fa6";
+import {FaFile, FaLink, FaTrashAlt} from "react-icons/fa";
 import Image from "next/image";
+import {Modal} from "@/app/components/Modal";
+import {AnchorButton} from "@/app/components/Buttons";
+import {AddFile} from "@/app/add/page";
+import {useToast} from "@/app/components/ToastController";
+import {useModal} from "@/app/components/ModalController";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    const [files, setFiles] = useState<{ fileName: string; fileId: string; }[] | null>(null);
+    const {showModal, closeModal} = useModal();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    useEffect(() => {
+        updateFiles();
+    }, []);
+
+    const updateFiles = () => {
+        axios.get('/api/share')
+            .then((res) => {
+                setFiles(res.data.files);
+            }).catch((err) => {
+            if (err.status === 404) {
+                setFiles([]);
+                return;
+            }
+        });
+    }
+
+    return (
+        <main className={'mt-6'}>
+            <ul className={'flex flex-wrap gap-4'}>
+                {
+                    files ? files.length > 0 ?
+                        files.map((file: { fileName: string, fileId: string }, index) => (
+                            <li className={'w-[320px] h-[275px] bg-alt-gray-100 flex flex-col justify-between p-4 gap-4'}
+                                key={index}>
+                            <span
+                                className={'overflow-hidden whitespace-nowrap text-ellipsis w-full min-h-6'} title={file.fileName}>{file.fileName}</span>
+                                <div className={'text-[70px] w-full overflow-hidden flex justify-center'}>
+                                    {
+                                        file.fileName.match(/\.(jpeg|jpg|png|gif|webp)$/i) ?
+                                            <Image className={'w-full h-full object-cover'} quality={50} width={200} height={200}
+                                                   src={`/api/share?id=${file.fileId}`} alt={file.fileName}/>
+                                            : <FaFile className={'w-min'}/>
+                                    }
+                                </div>
+                                <div className={'flex justify-end gap-2'}>
+                                    <DeleteButton className={'text-xl transition-colors hover:text-red-500'} id={file.fileId} onDelete={updateFiles}><FaTrashAlt/></DeleteButton>
+                                    <Link className={'text-white text-xl'} href={`/${file.fileId}`}><FaLink/></Link>
+                                    <DownloadButton url={`/api/share?id=${file.fileId}`} name={file.fileName}><FaDownload className={'text-xl'}/></DownloadButton>
+                                    {/** TODO: Expiring in */}
+                                </div>
+                            </li>
+                        ))
+                        : <span>zadne soubory LLLLLLLLLLLLLL</span> : <span>Načítání...</span>
+                }
+            </ul>
+            <AnchorButton
+                className={'fixed bottom-0 right-0 font-heading text-4xl rounded-full font-bold !p-0 m-6 w-12 h-12 grid place-items-center'}
+                onClick={() => showModal(false, <AddFile onUpload={() => {
+                    updateFiles();
+                    closeModal();
+                }}/>)}>+</AnchorButton>
+        </main>
+    );
+}
+
+interface BaseProps {
+    children?: ReactNode
+    className?: string
+}
+
+interface DownloadProps extends BaseProps{
+    url: string,
+    name: string
+}
+
+export function DownloadButton({children, url, name}: DownloadProps) {
+    const [downloadProgress, setDownloadProgress] = useState<number | null>(null);
+
+    const showToast = useToast();
+    const {showModal, closeModal} = useModal();
+
+    const handleDownload = () => {
+        setDownloadProgress(0);
+
+        axios.get(url, {
+            responseType: 'blob',
+            onDownloadProgress: (progressEvent) => {
+                if (progressEvent.progress) {
+                    setDownloadProgress(progressEvent.progress * 100);
+                }
+            }
+        })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', name);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+                setDownloadProgress(null);
+                showToast('Soubor byl úspěšně stažen.');
+                closeModal();
+            })
+            .catch((error) => {
+                console.error('Download failed', error);
+                showToast('Něco se nepovedlo při stahování souboru. ;(');
+            });
+    }
+
+    return (
+        <>
+
+            {
+                downloadProgress !== null ?
+                    <Modal locked={true} title={'Stahování'}>
+                        <div className={'w-full h-4 bg-alt-gray-300 mt-4'}>
+                            <div className={'bg-aero-500 transition-all h-full'}
+                                 style={{width: downloadProgress + '%'}}></div>
+                        </div>
+                    </Modal> : null
+            }
+            <a onClick={handleDownload}>{children}</a>
+        </>
+    )
+}
+
+interface DeleteProps extends BaseProps{
+    onDelete?: () => void,
+    id: string
+}
+
+export function DeleteButton({children, id, onDelete, className}: DeleteProps){
+    if (!id) return null;
+    const {showModal, closeModal} = useModal();
+
+    const handleDelete = () => {
+        axios.delete('/api/share', {
+            data: {
+                id: id
+            }
+        }).then(res => {
+            onDelete && onDelete();
+        });
+    }
+
+    return (
+        <button className={className}
+                onClick={() => showModal(false, 'Opravdu si přejete smazat tento soubor?', 'Opravdu?',
+                    <AnchorButton onClick={handleDelete}>Vymáznout</AnchorButton>, <button
+                        className={'px-4 w-full h-full'}>Zrušit</button>)}>{children}
+        </button>
+    )
 }
