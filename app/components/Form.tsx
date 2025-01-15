@@ -12,7 +12,7 @@ export function Input({children, className, label = '', ...props}: InputProps) {
         <label className={className}>
             {label}
             <input
-                className={'bg-alt-gray-250 border-2 border-alt-gray-300 outline-0 px-2 py-1 transition-all enabled:hover:bg-alt-gray-300 disabled:brightness-75 ' + className} {...props}/>
+                className={'bg-alt-gray-250 border-2 border-alt-gray-300 outline-0 px-4 py-2 transition-all enabled:hover:bg-alt-gray-300 disabled:brightness-75 ' + className} {...props}/>
             {children}
         </label>
     )

@@ -2,8 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import prisma from "@/app/utilities/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import bcrypt from "bcrypt";
-
-// TODO: JWT
+import jwt from "jsonwebtoken";
 
 export async function POST(req: NextRequest) {
     try {
@@ -24,6 +23,9 @@ export async function POST(req: NextRequest) {
         const res = await bcrypt.compare(password, record.password);
 
         if (res) {
+            const payload = { id: record.id, username: username };
+            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '14d' })
+
             return NextResponse.json({message: 'Password correct'});
         }
         return NextResponse.json({ message: 'Password not correct' }, { status: 401 });
