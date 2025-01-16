@@ -24,11 +24,14 @@ export async function POST(req: NextRequest) {
 
         if (res) {
             const payload = { id: record.id, username: username };
-            const token = jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: '14d' })
+            const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: '14d' })
 
-            return NextResponse.json({message: 'Authentication successful'});
+            return NextResponse.json({
+                message: 'Authentication successful',
+                accessToken: accessToken,
+            });
         }
-        return NextResponse.json({ message: 'Authentication unsuccessful' }, { status: 401 });
+        return NextResponse.json({message: 'Authentication unsuccessful'}, { status: 401 });
 
     } catch (err: any) {
         if (err instanceof PrismaClientKnownRequestError) {

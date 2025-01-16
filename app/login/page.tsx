@@ -27,7 +27,7 @@ export default function Login() {
             return;
         }
 
-        await axios.post('/api/user/login', {
+        await axios.post('/api/auth/user/login', {
             username: usernameEmail,
             email: usernameEmail,
             password: password
