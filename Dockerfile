@@ -1,11 +1,15 @@
-FROM node:23-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json .
+COPY package.json package-lock.json ./
 
 RUN npm install
 
 COPY . .
 
-CMD ["npm", "run", "dev"]
+RUN npx prisma generate
+
+RUN npm run build
+
+CMD ["npm", "run", "start"]

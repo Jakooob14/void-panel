@@ -3,28 +3,33 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base{
-  html{
+@layer base {
+  html {
     font-family: 'Poppins', sans-serif;
     scroll-behavior: smooth;
   }
 
-  h1, h2, h3, h4, h5, h6{
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Montserrat', sans-serif;
   }
 
-  body{
+  body {
     @apply bg-alt-gray-primary;
     @apply text-white;
   }
 
-  a{
+  a {
     @apply text-aero-400;
     @apply transition-colors;
     @apply hover:text-aero-600;
   }
 
-  .container{
+  .container {
     @apply px-4;
   }
 
@@ -36,6 +41,7 @@
     display: none;
   }
 }
-main{
+
+main {
   background-size: 50px !important;
 }

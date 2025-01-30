@@ -1,16 +1,19 @@
 services:
-  app:
+  void-panel:
     restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "48624:3000"
     volumes:
-      - ./:/app
-      - ./app:/app/app
+      - ./share:/app/share
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      BASE_URL: ${BASE_URL}
+      SERVER_HOST: ${SERVER_HOST}
       NEXT_PUBLIC_MAX_FILE_SIZE: ${NEXT_PUBLIC_MAX_FILE_SIZE}
-      WATCHPACK_POLLING: true
-      CHOKIDAR_USEPOLLING: true
+      NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE: ${NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE}
+      DATABASE_URL: ${DATABASE_URL}
+      SESSION_SECRET: ${SESSION_SECRET}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: ${REDIS_PORT}
