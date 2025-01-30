@@ -25,12 +25,11 @@ export default async function middleware(req: NextRequest) {
 
   // Verify that accessToken cookie is valid, if not and refreshToken cookie is valid generate a new accessToken
   if (accessToken) {
-    session = await fetch(new URL('/api/auth/token', req.nextUrl), {
+    session = await fetch('https://void.jakooob.dev/api/auth/token', {
       headers: {
         Cookie: cks.toString(),
       },
     });
-
     cookie = session.headers.get('Set-Cookie');
     session = (await session.json()).session;
   }
@@ -65,3 +64,4 @@ export default async function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*?woff|.*?ttf).*)'],
 };
+
