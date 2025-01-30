@@ -1,27 +1,19 @@
 'use client';
 
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { Heading1 } from '@/app/components/Headings';
 import { AnchorButton } from '@/app/components/Buttons';
-import { DeleteButton, DownloadButton } from '@/app/page';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import DownloadButton from '@/app/share/DownloadButton';
+import DeleteButton from '@/app/share/DeleteButton';
 
 interface FileProps {
   id: string;
+  file: { name: string };
 }
 
-export default function FileClient({ id }: FileProps) {
+export default function FileClient({ id, file }: FileProps) {
   const router = useRouter();
-
-  const [file, setFile] = useState<any>(null);
-
-  useEffect(() => {
-    axios.get(`/api/share?id=${id}&minimal=true`).then((res) => {
-      setFile(res.data);
-    });
-  }, []);
 
   return (
     <main className={'container p-4 mx-auto'}>
@@ -38,7 +30,7 @@ export default function FileClient({ id }: FileProps) {
               Vymáznout
             </DeleteButton>
           </div>
-          <Image src={`/api/share?id=${id}`} alt={file.name} width={10} height={10} className={'w-[80%] max-w-[1000px]'} />
+          <Image src={`/api/share?id=${id}`} alt={file.name} width={1000} height={1000} className={'w-[80%] max-w-[1000px]'} />
         </div>
       )}
     </main>

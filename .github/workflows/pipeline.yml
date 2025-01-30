@@ -1,0 +1,32 @@
+name: Deploy to Server with Docker
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH for deployment
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: SSH into server and deploy
+        run: |
+          ssh ${{ secrets.SSH_ADDRESS }} "cd ~/void-panel/ && git pull origin master && docker-compose down && docker-compose up -d"
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          NEXT_PUBLIC_MAX_FILE_SIZE: ${{ secrets.NEXT_PUBLIC_MAX_FILE_SIZE }}
+          NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE: ${{ secrets.NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}

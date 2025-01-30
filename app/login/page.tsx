@@ -1,24 +1,27 @@
 'use client';
 
 import { Input } from '@/app/components/Form';
-import { FormEventHandler, useState } from 'react';
-import axios from 'axios';
+import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Heading1 } from '@/app/components/Headings';
+import { useAuthContext } from '@/app/context/AuthContext';
+import { login } from '@/app/actions/auth';
 
 export default function Login() {
   const router = useRouter();
+  const authContext = useAuthContext();
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>(' ');
 
-  const handleSubmit = async (e: FormEventHandler<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const usernameEmail = e.target.usernameEmail.value;
-    const password = e.target.password.value;
+    const form = e.target as HTMLFormElement;
+    const usernameEmail = (form.elements.namedItem('usernameEmail') as HTMLInputElement).value;
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value;
 
     if (!usernameEmail) {
-      setErrorMessage('Chybí uživatelské jméno nebo e-mail!');
+      setErrorMessage('Chybí uživatelské jméno nebo email!');
       return;
     }
 
@@ -27,23 +30,33 @@ export default function Login() {
       return;
     }
 
-    await axios
-      .post('/api/auth/user/login', {
-        username: usernameEmail,
-        email: usernameEmail,
-        password: password,
-      })
-      .then((res) => {
-        setErrorMessage(null);
-        router.push('/');
-      })
-      .catch((err) => {
-        if (err.status === 401) {
-          setErrorMessage('Nesprávné přihlašovací údaje');
-          return;
-        }
-        console.error(err.stack);
-      });
+    setErrorMessage(await login(usernameEmail, password));
+
+    // await fetch('/api/auth/user/login', {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+    //     username: usernameEmail,
+    //     email: usernameEmail,
+    //     password: password,
+    //   }),
+    // })
+    //   .then((res) => {
+    //     if (res.ok) {
+    //       setErrorMessage(' ');
+    //       // authContext.authenticate();
+    //       router.push('/login?next=/share');
+    //       router.refresh();
+    //     } else {
+    //       setErrorMessage('Nesprávné přihlašovací údaje');
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     if (err.status === 401 || err.status === 404) {
+    //       setErrorMessage('Něco se pokazilo');
+    //       return;
+    //     }
+    //     console.error(err.stack);
+    //   });
   };
 
   return (
@@ -51,11 +64,11 @@ export default function Login() {
       <div className={'flex flex-col justify-center items-center gap-8'}>
         <Heading1>Přihlášení</Heading1>
         <form className={'flex flex-col w-[300px] gap-4'} onSubmit={handleSubmit}>
-          <Input className={'w-full'} name='usernameEmail' placeholder='Uživatelské jméno / E-Mail' />
-          <Input className={'w-full'} name='password' type='password' placeholder='Heslo' />
+          <Input className={'w-full'} name='usernameEmail' placeholder='Uživatelské jméno / E-Mail' autoComplete={'username'} />
+          <Input className={'w-full'} name='password' type='password' placeholder='Heslo' autoComplete={'current-password'} />
           {/* TODO: Captcha */}
-          {errorMessage && <span className={'text-sm text-red-500 -mb-2.5'}>{errorMessage}</span>}
-          <Input className={'w-full'} type='submit' value='Login' />
+          <Input className={'w-full'} type='submit' value='Přihlásit' />
+          <span className={'text-sm text-red-500'}>{errorMessage}</span>
         </form>
       </div>
     </main>

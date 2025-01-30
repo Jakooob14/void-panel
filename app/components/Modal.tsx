@@ -1,3 +1,5 @@
+'use client';
+
 import { MouseEventHandler, ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Heading1 } from '@/app/components/Headings';
@@ -10,10 +12,11 @@ interface ModalProps {
   title?: string;
   locked: boolean;
   primaryButton?: ReactNode;
+  onPrimaryButtonClicked?: MouseEventHandler<HTMLElement>;
   exitButton?: ReactNode;
 }
 
-export function Modal({ children, isOpen = true, locked = false, onClose, title, primaryButton, exitButton }: ModalProps) {
+export function Modal({ children, isOpen = true, locked = false, onClose, title, primaryButton, onPrimaryButtonClicked, exitButton }: ModalProps) {
   const [opacity, setOpacity] = useState(1);
   const [shouldRender, setShouldRender] = useState(isOpen);
 
@@ -38,6 +41,11 @@ export function Modal({ children, isOpen = true, locked = false, onClose, title,
   if (!shouldRender || typeof document === 'undefined') return null;
 
   const handleClose = (e: React.MouseEvent<HTMLElement>) => {
+    if (onPrimaryButtonClicked) {
+      onPrimaryButtonClicked(e);
+      return;
+    }
+
     if (!onClose) return;
 
     setOpacity(0);

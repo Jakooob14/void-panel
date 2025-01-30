@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
+import React, { createContext, MouseEventHandler, ReactNode, useCallback, useContext, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Modal } from '@/app/components/Modal';
 
@@ -11,11 +11,12 @@ type ModalType = {
   title?: string;
   locked: boolean;
   primaryButton?: ReactNode;
+  onPrimaryButtonClicked?: MouseEventHandler<HTMLElement>;
   exitButton?: ReactNode;
 };
 
 type ModalContextType = {
-  showModal: (locked: boolean, children?: ReactNode, title?: string, primaryButton?: ReactNode, exitButton?: ReactNode) => void;
+  showModal: (locked: boolean, children?: ReactNode, title?: string, primaryButton?: ReactNode, onPrimaryButtonClicked?: MouseEventHandler<HTMLElement>, exitButton?: ReactNode) => void;
   closeModal: () => void;
 };
 
@@ -24,10 +25,13 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [modals, setModals] = useState<ModalType[]>([]);
 
-  const showModal = useCallback((locked: boolean = false, children?: ReactNode, title?: string, primaryButton?: ReactNode, exitButton?: ReactNode) => {
-    const id = Date.now();
-    setModals((prev) => [...prev, { id, title, primaryButton, exitButton, children, locked }]);
-  }, []);
+  const showModal = useCallback(
+    (locked: boolean = false, children?: ReactNode, title?: string, primaryButton?: ReactNode, onPrimaryButtonClicked?: MouseEventHandler<HTMLElement>, exitButton?: ReactNode) => {
+      const id = Date.now();
+      setModals((prev) => [...prev, { id, title, primaryButton, onPrimaryButtonClicked, exitButton, children, locked }]);
+    },
+    []
+  );
 
   const closeModal = useCallback(() => {
     setModals((prev) => prev.slice(0, -1)); // Remove the most recent modal
@@ -45,6 +49,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
               primaryButton={modal.primaryButton}
               exitButton={modal.exitButton}
               locked={modal.locked}
+              onPrimaryButtonClicked={modal.onPrimaryButtonClicked}
               onClose={() => !modal.locked && setModals((prev) => prev.filter((_modal) => _modal.id !== modal.id))}
             >
               {modal.children}

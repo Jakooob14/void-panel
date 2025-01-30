@@ -1,32 +1,25 @@
 'use client';
 
-import { FormEvent, HTMLAttributes, useState } from 'react';
-import axios from 'axios';
-import { Input, InputInnerLabel } from '@/app/components/Form';
-import { FaFileUpload } from 'react-icons/fa';
+import { HTMLAttributes, useState } from 'react';
 import { useToast } from '@/app/components/ToastController';
+import { Input, InputInnerLabel } from '@/app/components/Form';
 import formatBytes from '@/app/utilities/formatBytes';
+import { FaFileUpload } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
-// const MAX_FILE_SIZE: number = parseInt(process.env.NEXT_PUBLIC_MAX_FILE_SIZE || '100000000');
-const MAX_FILE_SIZE: number = 1073741824;
-
-export default function Add() {
-  return (
-    <main className={'flex justify-center items-center h-screen'}>
-      <AddFile className={'w-full h-full justify-center'} />
-    </main>
-  );
-}
+const MAX_FILE_SIZE: number = parseInt(process.env.NEXT_PUBLIC_MAX_FILE_SIZE || '0');
 
 interface AddFileProps extends HTMLAttributes<HTMLDivElement> {
   onUpload?: () => void;
   className?: string;
+  editId?: string;
 }
 
-export function AddFile({ onUpload, className, ...props }: AddFileProps) {
+export default function AddFile({ onUpload, className, editId, ...props }: AddFileProps) {
   const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const router = useRouter();
 
   const showToast = useToast();
 
@@ -59,7 +52,7 @@ export function AddFile({ onUpload, className, ...props }: AddFileProps) {
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!file) return;
@@ -72,30 +65,35 @@ export function AddFile({ onUpload, className, ...props }: AddFileProps) {
     const formData = new FormData();
     formData.append('file', file);
 
-    axios
-      .post('/api/share', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent) => {
-          console.log(progressEvent);
-          if (progressEvent.progress) {
-            setUploadProgress(progressEvent.progress * 80);
-          }
-        },
-      })
-      .then((res) => {
-        setUploadProgress(100);
-        onUpload && onUpload();
-        showToast('Soubor byl úspěšně nahrán.');
-      })
-      .catch((err) => {
-        console.log(err);
-        showToast('Nastal problém při nahrávání souboru.');
+    const xhr = new XMLHttpRequest();
+
+    new Promise((resolve) => {
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          setUploadProgress((event.loaded / event.total) * 90);
+        }
       });
+      xhr.addEventListener('loadend', () => {
+        if (xhr.status === 413) {
+          showToast('Přesažena maximální velikost účtu', 5000);
+        }
+        setUploadProgress(100);
+        if (onUpload) onUpload();
+        resolve(xhr.readyState === 4 && xhr.status === 200);
+        if (editId) window.location.reload();
+      });
+      if (editId) {
+        xhr.open('PUT', `/api/share?id=${editId}`, true);
+        xhr.send(formData);
+      } else {
+        xhr.open('POST', '/api/share', true);
+        xhr.send(formData);
+      }
+    });
   };
 
   return (
+    // @ts-expect-error I have no clue why onSubmit is not accepting the event handler
     <form className={'flex flex-col gap-4 max-w-[500px] ' + className} onSubmit={handleSubmit} {...props}>
       <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
         <InputInnerLabel

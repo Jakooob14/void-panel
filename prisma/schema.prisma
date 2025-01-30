@@ -8,12 +8,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model UserWhitelist {
+  email String @id @unique
+}
+
 model User {
   id        String   @id @default(uuid())
   username  String   @unique
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  files     File[]
 }
 
 model File {
@@ -22,4 +27,8 @@ model File {
   uploadedAt DateTime @default(now())
   expiresAt  DateTime
   path       String
+  ownerId    String
+  owner      User     @relation(fields: [ownerId], references: [id])
+  viewers    String[] @default([])
+  public     Boolean  @default(false)
 }

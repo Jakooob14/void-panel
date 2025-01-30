@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
 import './globals.scss';
-import Sidebar from '@/app/components/Sidebar';
 import { ToastProvider } from '@/app/components/ToastController';
 import { ModalProvider } from '@/app/components/ModalController';
+import Client from '@/app/Client';
+import { AuthContextProvider } from '@/app/context/AuthContext';
+import Sidebar from '@/app/components/Sidebar';
 
 export const metadata: Metadata = {
   title: 'Void Panel',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -16,12 +18,14 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={'antialiased'}>
-        <ToastProvider>
-          <ModalProvider>
-            <Sidebar />
-            <div className={'ms-[348px] me-6'}>{children}</div>
-          </ModalProvider>
-        </ToastProvider>
+        <AuthContextProvider>
+          <ToastProvider>
+            <ModalProvider>
+              <Sidebar />
+              <Client>{children}</Client>
+            </ModalProvider>
+          </ToastProvider>
+        </AuthContextProvider>
       </body>
     </html>
   );
