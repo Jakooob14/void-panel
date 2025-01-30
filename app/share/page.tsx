@@ -17,14 +17,14 @@ export default async function Share() {
 
   const totalSize = (await getUserTotalFilesSize()) || 0;
 
-  const totalSizePercentage = (totalSize / Number(process.env.NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE)) * 100;
+  const totalSizePercentage = (totalSize / 26843545600) * 100;
 
   return (
     <main className={'mt-6 flex flex-col gap-2'}>
       <div className={'flex'}>
         <div className={'w-40'}>
           <div className={`bg-alt-gray-100 py-3 px-4 font-semibold w-full text-center ${totalSizePercentage > 95 ? 'text-red-500' : totalSizePercentage > 90 && 'text-yellow-500'}`}>
-            {formatBytes(totalSize, 2)} / {formatBytes(Number(process.env.NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE))}
+            {formatBytes(totalSize, 2)} / {formatBytes(26843545600)}
           </div>
           <div className={'w-full h-1 bg-alt-gray-300'}>
             <div

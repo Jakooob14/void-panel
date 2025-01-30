@@ -7,7 +7,7 @@ import formatBytes from '@/app/utilities/formatBytes';
 import { FaFileUpload } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
-const MAX_FILE_SIZE: number = parseInt(process.env.NEXT_PUBLIC_MAX_FILE_SIZE || '0');
+const MAX_FILE_SIZE: number = 1073741824;
 
 interface AddFileProps extends HTMLAttributes<HTMLDivElement> {
   onUpload?: () => void;

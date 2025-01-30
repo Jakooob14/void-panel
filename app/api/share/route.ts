@@ -104,11 +104,11 @@ export async function POST(req: NextRequest) {
     const safeFileName = path.basename(file.name);
     const uuid = uuidv4();
 
-    if (file.size > Number(process.env.NEXT_PUBLIC_MAX_FILE_SIZE || '0')) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
+    if (file.size > 1073741824) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
 
     const totalSize = await getUserTotalFilesSize();
-    const maxTotalFilesSize = Number(process.env.NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE);
-    if (totalSize === null || !maxTotalFilesSize || maxTotalFilesSize === 0) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    const maxTotalFilesSize = 26843545600;
+    if (totalSize === null || !maxTotalFilesSize) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
     if (totalSize + buffer.length > maxTotalFilesSize) return NextResponse.json({ message: 'Insufficient storage' }, { status: 413 });
 
     await fs.writeFile('share/' + uuid, buffer);
@@ -152,11 +152,11 @@ export async function PUT(req: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const safeFileName = path.basename(file.name);
 
-    if (file.size > Number(process.env.NEXT_PUBLIC_MAX_FILE_SIZE || '0')) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
+    if (file.size > 1073741824) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
 
     const totalSize = await getUserTotalFilesSize();
-    const maxTotalFilesSize = Number(process.env.NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE);
-    if (totalSize === null || !maxTotalFilesSize || maxTotalFilesSize === 0) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    const maxTotalFilesSize = 26843545600;
+    if (totalSize === null || !maxTotalFilesSize) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
     if (totalSize + buffer.length > maxTotalFilesSize) return NextResponse.json({ message: 'Insufficient storage' }, { status: 413 });
 
     const record = await prisma.file.update({

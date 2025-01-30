@@ -14,8 +14,7 @@ export default async function middleware(req: NextRequest) {
   const res = NextResponse.next();
   res.headers.set('X-Pathname', req.nextUrl.pathname);
 
-  // TODO: CHANGE!!!
-  res.headers.set('cf-connecting-ip', '2a02:8309:4286:3000:1047:63cf:6d95:c1fd');
+  res.headers.set('cf-connecting-ip', process.env.NODE_ENV === 'production' ? req.headers.get('cf-connecting-ip') || '' : 'dev');
 
   const cks = await cookies();
   const accessToken = cks.get('accessToken')?.value || cks.get('refreshToken')?.value;
@@ -25,7 +24,7 @@ export default async function middleware(req: NextRequest) {
 
   // Verify that accessToken cookie is valid, if not and refreshToken cookie is valid generate a new accessToken
   if (accessToken) {
-    session = await fetch('https://void.jakooob.dev/api/auth/token', {
+    session = await fetch(`${process.env.BASE_URL}/api/auth/token`, {
       headers: {
         Cookie: cks.toString(),
       },
@@ -44,7 +43,7 @@ export default async function middleware(req: NextRequest) {
   if (isProtectedRoute && !session) {
     const response = NextResponse.redirect(new URL('/login', req.url));
     response.headers.set('X-Pathname', req.nextUrl.pathname);
-    response.headers.set('cf-connecting-ip', '2a02:8309:4286:3000:1047:63cf:6d95:c1fd');
+    response.headers.set('cf-connecting-ip', process.env.NODE_ENV === 'production' ? req.headers.get('cf-connecting-ip') || '' : 'dev');
     return response;
   }
 
@@ -64,4 +63,3 @@ export default async function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*?woff|.*?ttf).*)'],
 };
-

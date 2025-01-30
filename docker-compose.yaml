@@ -6,23 +6,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "48624:3000"
-    networks:
-      - database_redis
-      - database_database
     volumes:
       - ./share:/app/share
     environment:
       BASE_URL: ${BASE_URL}
       SERVER_HOST: ${SERVER_HOST}
-      NEXT_PUBLIC_MAX_FILE_SIZE: ${NEXT_PUBLIC_MAX_FILE_SIZE}
-      NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE: ${NEXT_PUBLIC_MAX_TOTAL_FILES_SIZE}
       DATABASE_URL: ${DATABASE_URL}
       SESSION_SECRET: ${SESSION_SECRET}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_PORT: ${REDIS_PORT}
-
-networks:
-  database_redis:
-    external: true
-  database_database:
-    external: true
