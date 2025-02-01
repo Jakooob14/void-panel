@@ -3,7 +3,6 @@
 import { AnchorButton, LinkButton } from '@/app/components/Buttons';
 import { Heading1 } from '@/app/components/Headings';
 import { logout } from '@/app/actions/auth';
-import { useAuthContext } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
 interface SidebarProps {
@@ -14,7 +13,6 @@ interface SidebarProps {
 
 export default function SidebarClient({ user }: SidebarProps) {
   const router = useRouter();
-  const authContext = useAuthContext();
 
   const handleLogout = () => {
     logout().then(() => {

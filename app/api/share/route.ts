@@ -12,15 +12,17 @@ import { getUserTotalFilesSize } from '@/app/utilities/dto/user';
 
 export async function GET(req: NextRequest) {
   // TODO: Encrypt
+  // TODO: Fix public and shared (now it doesn't go through if it's public or shared)
   try {
     const session = await getCurrentUserId();
-    if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
     const { searchParams } = req.nextUrl;
     const fileId = searchParams.get('id');
     const isMinimal = searchParams.get('minimal') === 'true';
 
     if (!fileId) {
+      if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+
       const files = await getFiles();
       if (!files) return NextResponse.json({ message: 'No files found' }, { status: 404 });
 

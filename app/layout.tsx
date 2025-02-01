@@ -3,7 +3,6 @@ import './globals.scss';
 import { ToastProvider } from '@/app/components/ToastController';
 import { ModalProvider } from '@/app/components/ModalController';
 import Client from '@/app/Client';
-import { AuthContextProvider } from '@/app/context/AuthContext';
 import Sidebar from '@/app/components/Sidebar';
 
 export const metadata: Metadata = {
@@ -18,14 +17,12 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body className={'antialiased'}>
-        <AuthContextProvider>
-          <ToastProvider>
-            <ModalProvider>
-              <Sidebar />
-              <Client>{children}</Client>
-            </ModalProvider>
-          </ToastProvider>
-        </AuthContextProvider>
+        <ToastProvider>
+          <ModalProvider>
+            <Sidebar />
+            <Client>{children}</Client>
+          </ModalProvider>
+        </ToastProvider>
       </body>
     </html>
   );

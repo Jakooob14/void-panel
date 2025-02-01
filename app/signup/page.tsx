@@ -2,15 +2,10 @@
 
 import { Input } from '@/app/components/Form';
 import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Heading1 } from '@/app/components/Headings';
-import { useAuthContext } from '@/app/context/AuthContext';
 import { signup } from '@/app/actions/auth';
 
 export default function Signup() {
-  const router = useRouter();
-  const authContext = useAuthContext();
-
   const [errorMessage, setErrorMessage] = useState<string | string[]>(' ');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
