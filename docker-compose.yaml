@@ -4,6 +4,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - BASE_URL=${BASE_URL}
+        - SERVER_HOST=${SERVER_HOST}
+        - DATABASE_URL=${DATABASE_URL}
+        - SESSION_SECRET=${SESSION_SECRET}
+        - REDIS_PASSWORD=${REDIS_PASSWORD}
+        - REDIS_PORT=${REDIS_PORT}
+        - FILE_ENCRYPTION_KEY=${FILE_ENCRYPTION_KEY}
     ports:
       - "48624:3000"
     networks:
@@ -11,17 +19,11 @@ services:
       - database_database
     volumes:
       - ./share:/app/share
-    environment:
-      BASE_URL: ${BASE_URL}
-      SERVER_HOST: ${SERVER_HOST}
-      DATABASE_URL: ${DATABASE_URL}
-      SESSION_SECRET: ${SESSION_SECRET}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-      REDIS_PORT: ${REDIS_PORT}
+    env_file:
+      - .env
 
 networks:
   database_redis:
     external: true
   database_database:
     external: true
-

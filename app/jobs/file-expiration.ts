@@ -33,6 +33,7 @@ cron.schedule('* * * * *', async () => {
 });
 
 cron.schedule('0 * * * *', async () => {
+  // TODO: Fix weird bug when it sometimes deletes all the files from the DB (maybe when one file gets deleted from the server a chain reaction happens???)
   try {
     const filesInDb = await prisma.file.findMany({
       select: {

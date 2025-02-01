@@ -38,6 +38,7 @@ export async function GET(req: NextRequest) {
 
     const file = await getFile(fileId);
     if (!file) return NextResponse.json({ status: 404, message: 'File not found' });
+    if (!file.path || !fileId) return NextResponse.json({ status: 400, message: 'Invalid file path or ID' });
 
     if (isMinimal) {
       return NextResponse.json({
@@ -46,7 +47,9 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const buffer = decryptFileBuffer(await fs.readFile(file.path + fileId));
+    const readFile = await fs.readFile(file.path + fileId);
+    if (!readFile) return NextResponse.json({ status: 404, message: 'File not found' });
+    const buffer = decryptFileBuffer(readFile);
     const mimeType = getMimeType(buffer);
     const isImage = mimeType?.startsWith('image/');
 
@@ -101,7 +104,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'No file uploaded' }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const arrayBuffer = await file.arrayBuffer();
+    if (!arrayBuffer) {
+      return NextResponse.json({ message: 'Invalid file data' }, { status: 400 });
+    }
+
+    const buffer = Buffer.from(arrayBuffer);
     const safeFileName = path.basename(file.name);
     const uuid = uuidv4();
 
@@ -150,7 +158,12 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: 'No file uploaded' }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const arrayBuffer = await file.arrayBuffer();
+    if (!arrayBuffer) {
+      return NextResponse.json({ message: 'Invalid file data' }, { status: 400 });
+    }
+
+    const buffer = Buffer.from(arrayBuffer);
     const safeFileName = path.basename(file.name);
 
     if (file.size > 1073741824) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
