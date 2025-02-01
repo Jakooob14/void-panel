@@ -62,11 +62,11 @@ export default function File({ fileId, fileName, isImage = false, expiresAt }: F
   }, [expiresAt]);
 
   return timeLeft ? (
-    <Link href={`/share/${fileId}`} className={'text-white hover:text-white w-[320px] h-[275px] bg-alt-gray-100 hover:bg-[hsl(0,0%,7%)] flex flex-col justify-between p-4 gap-4'}>
+    <div className={'text-white transition-colors hover:text-white w-[320px] h-[275px] bg-alt-gray-100 hover:bg-[hsl(0,0%,7%)] flex flex-col justify-between p-4 gap-4'}>
       <span className={'overflow-hidden whitespace-nowrap text-ellipsis w-full min-h-6'} title={fileName}>
         {fileName}
       </span>
-      <div className={'text-[70px] w-full overflow-hidden flex justify-center'}>
+      <Link href={`/share/${fileId}`} className={'text-white hover:text-white text-[70px] w-full overflow-hidden flex justify-center'}>
         {isImage ? (
           <Image
             className={'w-full h-full object-cover data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10'}
@@ -83,7 +83,7 @@ export default function File({ fileId, fileName, isImage = false, expiresAt }: F
         ) : (
           <FaFile className={'w-min'} />
         )}
-      </div>
+      </Link>
       <div className={'flex justify-between gap-2'}>
         <span className={'flex items-center gap-1.5'}>
           <FaClock className={'mb-0.5'} /> {timeLeft}
@@ -92,14 +92,11 @@ export default function File({ fileId, fileName, isImage = false, expiresAt }: F
           <DeleteButton className={'text-xl transition-colors hover:text-red-500'} id={fileId}>
             <FaTrashAlt />
           </DeleteButton>
-          {/*<Link className={'text-white text-xl'} href={`/share/${fileId}`}>*/}
-          {/*  <FaLink />*/}
-          {/*</Link>*/}
           <DownloadButton url={`/api/share?id=${fileId}`} name={fileName}>
             <FaDownload className={'text-xl transition-colors hover:text-aero-600'} />
           </DownloadButton>
         </div>
       </div>
-    </Link>
+    </div>
   ) : null;
 }

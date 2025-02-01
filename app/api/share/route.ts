@@ -9,10 +9,9 @@ import { getFile, getFiles } from '@/app/utilities/dto/file';
 import sharp from 'sharp';
 import { getMimeType } from '@/app/utilities/mimeType';
 import { getUserTotalFilesSize } from '@/app/utilities/dto/user';
+import { decryptFileBuffer, encryptFileBuffer } from '@/app/utilities/fileCrypto';
 
 export async function GET(req: NextRequest) {
-  // TODO: Encrypt
-  // TODO: Fix public and shared (now it doesn't go through if it's public or shared)
   try {
     const session = await getCurrentUserId();
 
@@ -47,7 +46,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const buffer = await fs.readFile(file.path + fileId);
+    const buffer = decryptFileBuffer(await fs.readFile(file.path + fileId));
     const mimeType = getMimeType(buffer);
     const isImage = mimeType?.startsWith('image/');
 
@@ -113,9 +112,9 @@ export async function POST(req: NextRequest) {
     if (totalSize === null || !maxTotalFilesSize) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
     if (totalSize + buffer.length > maxTotalFilesSize) return NextResponse.json({ message: 'Insufficient storage' }, { status: 413 });
 
-    await fs.writeFile('share/' + uuid, buffer);
+    await fs.writeFile('share/' + uuid, encryptFileBuffer(buffer));
 
-    const record = await prisma.file.create({
+    await prisma.file.create({
       data: {
         id: uuid,
         name: safeFileName,
@@ -173,7 +172,7 @@ export async function PUT(req: NextRequest) {
 
     if (!record) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
-    await fs.writeFile('share/' + id, buffer);
+    await fs.writeFile('share/' + id, encryptFileBuffer(buffer));
 
     return NextResponse.json({ message: 'Success' });
   } catch (err: any) {

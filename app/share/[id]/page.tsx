@@ -25,7 +25,7 @@ export default async function File({ params }: FileProps) {
 
   const isOwner = userId === file.ownerId;
 
-  const startDataArray = await readFileAsPromise(file.path + id, { start: 0, end: 8 });
+  const startDataArray = await readFileAsPromise(file.path + id, { start: 16, end: 20 });
   const startData = Buffer.concat(startDataArray.map((chunk) => (typeof chunk === 'string' ? Buffer.from(chunk) : chunk)));
 
   const mimeType = getMimeType(startData);

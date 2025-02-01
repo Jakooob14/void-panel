@@ -8,6 +8,7 @@ import { getMimeType } from '@/app/utilities/mimeType';
 import { getCurrentUserId } from '@/app/actions/session';
 import { redirect } from 'next/navigation';
 import formatBytes from '@/app/utilities/formatBytes';
+import { readFileAsPromise } from '@/app/utilities/fileHelpers';
 
 export default async function Share() {
   const userId = await getCurrentUserId();
@@ -22,7 +23,7 @@ export default async function Share() {
   return (
     <main className={'mt-6 flex flex-col gap-2'}>
       <div className={'flex'}>
-        <div className={'w-40'}>
+        <div>
           <div className={`bg-alt-gray-100 py-3 px-4 font-semibold w-full text-center ${totalSizePercentage > 95 ? 'text-red-500' : totalSizePercentage > 90 && 'text-yellow-500'}`}>
             {formatBytes(totalSize, 2)} / {formatBytes(26843545600)}
           </div>
@@ -48,8 +49,10 @@ export default async function Share() {
                 return <></>;
               }
 
-              const fileBuffer = await fs.readFile(filePath);
-              const mimeType = getMimeType(fileBuffer);
+              const startDataArray = await readFileAsPromise(file.path + file.id, { start: 16, end: 20 });
+              const startData = Buffer.concat(startDataArray.map((chunk) => (typeof chunk === 'string' ? Buffer.from(chunk) : chunk)));
+
+              const mimeType = getMimeType(startData);
               const isImage = mimeType?.startsWith('image/');
 
               return (

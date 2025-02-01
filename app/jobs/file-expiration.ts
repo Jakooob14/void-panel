@@ -57,6 +57,7 @@ cron.schedule('0 * * * *', async () => {
 
     for (const file of filesInDb) {
       const filePath = path.join(file.path, file.id);
+      console.log(filePath);
 
       try {
         await fs.access(filePath);

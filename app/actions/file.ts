@@ -4,24 +4,25 @@ import { getCurrentUserId } from '@/app/actions/session';
 import prisma from '@/app/utilities/prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { redirect } from 'next/navigation';
+import fs from 'fs/promises';
 
 export async function deleteFile(id: string) {
   const userId = await getCurrentUserId();
   if (!userId) return null;
 
   try {
-    // const record = await prisma.file.delete({
-    //   where: {
-    //     id,
-    //     ownerId: userId,
-    //   },
-    //   select: {
-    //     path: true,
-    //     id: true,
-    //   },
-    // });
-    //
-    // await fs.unlink(record.path + record.id);
+    const record = await prisma.file.delete({
+      where: {
+        id,
+        ownerId: userId,
+      },
+      select: {
+        path: true,
+        id: true,
+      },
+    });
+
+    await fs.unlink(record.path + record.id);
   } catch (err: any) {
     if (err instanceof PrismaClientKnownRequestError) {
       return 'K tomuto obsahu nemáte oprávnění!';

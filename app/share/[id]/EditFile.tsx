@@ -11,5 +11,5 @@ interface EditFileProps {
 export default function EditFile({ id }: EditFileProps) {
   const { showModal } = useModal();
 
-  return <OutlineButton onClick={() => showModal(false, <AddFile editId={id} />, 'asdf')}>Upravit</OutlineButton>;
+  return <OutlineButton onClick={() => showModal(false, <AddFile editId={id} className={'mt-4'} />, 'Upravit soubor')}>Upravit</OutlineButton>;
 }

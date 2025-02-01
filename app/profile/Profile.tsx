@@ -54,7 +54,6 @@ export default function ProfileClient({ name, email }: ProfileProps) {
         </span>
         <Input type={'submit'} value={'Uložit'} />
         <span className={'text-sm text-red-500'}>{errorMessage}</span>
-        {/* TODO */}
       </form>
     </main>
   );

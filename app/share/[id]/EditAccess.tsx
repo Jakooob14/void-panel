@@ -82,7 +82,9 @@ function AccessModal({ id, isPublicDefault, viewersDefault }: AccessModalProps) 
       <form className={'flex flex-col gap-4 my-4'} onSubmit={handleAdd}>
         <Input disabled={isPublic} name={'viewer'} />
         <Input
-          className={'bg-transparent !text-white border-aero-500 border-2 transition-all enabled:hover:!text-black enabled:hover:bg-aero-600 enabled:hover:border-aero-600 enabled:cursor-pointer'}
+          className={
+            'bg-transparent !text-white border-aero-500 hover:border-aero-600 border-2 transition-all enabled:hover:!text-black enabled:hover:bg-aero-600 enabled:hover:border-aero-600 enabled:cursor-pointer'
+          }
           type={'submit'}
           value={'Přidat'}
           disabled={isPublic}
