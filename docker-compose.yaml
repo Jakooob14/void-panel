@@ -12,6 +12,10 @@ services:
         - REDIS_PASSWORD=${REDIS_PASSWORD}
         - REDIS_PORT=${REDIS_PORT}
         - FILE_ENCRYPTION_KEY=${FILE_ENCRYPTION_KEY}
+    deploy:
+      resources:
+        limits:
+          memory: 1024MB
     ports:
       - "48624:3000"
     networks:
