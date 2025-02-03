@@ -5,7 +5,11 @@ import AddFile from '@/app/share/add/AddFile';
 import { useModal } from '@/app/components/ModalController';
 import { useRouter } from 'next/navigation';
 
-export default function AddFileButton() {
+interface AddFileButtonProps {
+  maxFileSize: number;
+}
+
+export default function AddFileButton({ maxFileSize }: AddFileButtonProps) {
   const { showModal, closeModal } = useModal();
   const router = useRouter();
 
@@ -16,6 +20,7 @@ export default function AddFileButton() {
         showModal(
           false,
           <AddFile
+            maxFileSize={maxFileSize}
             onUpload={() => {
               closeModal();
               router.refresh();

@@ -13,18 +13,23 @@ model UserWhitelist {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  files     File[]
+  id          String   @id @default(uuid())
+  username    String   @unique
+  email       String   @unique
+  password    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  permissions String[] @default([])
+  files       File[]
+  maxFileSize BigInt   @default(1073741824)
+  maxStorage  BigInt   @default(26843545600)
 }
 
 model File {
   id         String   @id @default(uuid())
   name       String
   uploadedAt DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
   expiresAt  DateTime
   path       String
   ownerId    String

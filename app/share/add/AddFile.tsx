@@ -7,15 +7,14 @@ import formatBytes from '@/app/utilities/formatBytes';
 import { FaFileUpload } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
-const MAX_FILE_SIZE: number = 1073741824;
-
 interface AddFileProps extends HTMLAttributes<HTMLDivElement> {
   onUpload?: () => void;
   className?: string;
   editId?: string;
+  maxFileSize: number;
 }
 
-export default function AddFile({ onUpload, className, editId, ...props }: AddFileProps) {
+export default function AddFile({ onUpload, className, editId, maxFileSize, ...props }: AddFileProps) {
   const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -57,7 +56,7 @@ export default function AddFile({ onUpload, className, editId, ...props }: AddFi
 
     if (!file) return;
 
-    if (file.size > MAX_FILE_SIZE) {
+    if (file.size > maxFileSize && Number(maxFileSize) !== -1) {
       showToast('Přesažena maximální velikost souboru');
       return;
     }
@@ -103,8 +102,11 @@ export default function AddFile({ onUpload, className, editId, ...props }: AddFi
           name={'file'}
           onChange={handleInputChange}
         >
-          <span className={`text-end absolute top-0 right-0 p-2 text-alt-gray-700 justify-self-start transition-colors ${file && file.size > MAX_FILE_SIZE && 'text-red-500'}`}>
-            {formatBytes(file ? file.size : 0)} / {formatBytes(MAX_FILE_SIZE)}
+          <span
+            className={`text-end absolute top-0 right-0 p-2 text-alt-gray-700 justify-self-start transition-colors ${file && Number(maxFileSize) !== -1 && file.size > maxFileSize && 'text-red-500'}`}
+          >
+            {formatBytes(file ? file.size : 0)}
+            {maxFileSize !== -1 && ` / ${formatBytes(maxFileSize)}`}
           </span>
           <FaFileUpload className={'text-5xl w-full'} />
           <span>
@@ -115,7 +117,7 @@ export default function AddFile({ onUpload, className, editId, ...props }: AddFi
           {file && <span className={'text-alt-gray-700 overflow-hidden text-ellipsis w-full whitespace-nowrap'}>{file.name}</span>}
         </InputInnerLabel>
       </div>
-      <Input className={'w-full'} type={'submit'} value={'Nahrát'} disabled={!file || file.size > MAX_FILE_SIZE} />
+      <Input className={'w-full'} type={'submit'} value={'Nahrát'} disabled={!file || (file.size > maxFileSize && Number(maxFileSize) !== -1)} />
       <div className={'w-full h-4 bg-alt-gray-300'}>
         <div className={'bg-aero-500 transition-all h-full'} style={{ width: uploadProgress + '%' }}></div>
       </div>

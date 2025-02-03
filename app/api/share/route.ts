@@ -113,12 +113,8 @@ export async function POST(req: NextRequest) {
     const safeFileName = path.basename(file.name);
     const uuid = uuidv4();
 
-    if (file.size > 1073741824) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
-
-    const totalSize = await getUserTotalFilesSize();
-    const maxTotalFilesSize = 26843545600;
-    if (totalSize === null || !maxTotalFilesSize) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
-    if (totalSize + buffer.length > maxTotalFilesSize) return NextResponse.json({ message: 'Insufficient storage' }, { status: 413 });
+    const storage = await verifyStorage(userId, file.size, buffer.length);
+    if (storage !== true) return storage;
 
     await fs.writeFile('share/' + uuid, encryptFileBuffer(buffer));
 
@@ -166,12 +162,8 @@ export async function PUT(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
     const safeFileName = path.basename(file.name);
 
-    if (file.size > 1073741824) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
-
-    const totalSize = await getUserTotalFilesSize();
-    const maxTotalFilesSize = 26843545600;
-    if (totalSize === null || !maxTotalFilesSize) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
-    if (totalSize + buffer.length > maxTotalFilesSize) return NextResponse.json({ message: 'Insufficient storage' }, { status: 413 });
+    const storage = await verifyStorage(userId, file.size, buffer.length);
+    if (storage !== true) return storage;
 
     const record = await prisma.file.update({
       where: {
@@ -214,4 +206,28 @@ export async function DELETE(req: NextRequest) {
     console.error(err.stack);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
+}
+
+async function verifyStorage(userId: string, fileSize: number, bufferLength: number) {
+  const currentUser = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      maxFileSize: true,
+      maxStorage: true,
+    },
+  });
+
+  if (!currentUser) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+
+  if (Number(currentUser.maxFileSize) !== -1 && fileSize > currentUser.maxFileSize) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
+
+  if (Number(currentUser.maxStorage) === -1) return true;
+
+  const totalSize = await getUserTotalFilesSize();
+  if (totalSize === null || !currentUser.maxStorage) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  if (totalSize + bufferLength > currentUser.maxStorage) return NextResponse.json({ message: 'Insufficient storage' }, { status: 413 });
+
+  return true;
 }
