@@ -6,10 +6,11 @@ import { useModal } from '@/app/components/ModalController';
 
 interface EditFileProps {
   id: string;
+  maxFileSize: number;
 }
 
-export default function EditFile({ id }: EditFileProps) {
+export default function EditFile({ id, maxFileSize }: EditFileProps) {
   const { showModal } = useModal();
 
-  return <OutlineButton onClick={() => showModal(false, <AddFile editId={id} className={'mt-4'} />, 'Upravit soubor')}>Upravit</OutlineButton>;
+  return <OutlineButton onClick={() => showModal(false, <AddFile editId={id} maxFileSize={maxFileSize} className={'mt-4'} />, 'Upravit soubor')}>Upravit</OutlineButton>;
 }

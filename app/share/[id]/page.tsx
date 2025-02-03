@@ -11,6 +11,7 @@ import { readFileAsPromise } from '@/app/utilities/fileHelpers';
 import EditAccess from '@/app/share/[id]/EditAccess';
 import { getCurrentUserId } from '@/app/actions/session';
 import EditFile from '@/app/share/[id]/EditFile';
+import prisma from '@/app/utilities/prisma';
 
 interface FileProps {
   params: Promise<{ id: string }>;
@@ -22,6 +23,15 @@ export default async function File({ params }: FileProps) {
 
   const file = await getFile(id);
   if (!file) return <main>K tomuto obsahu nemáte oprávnění</main>;
+
+  const currentUser = await prisma.user.findUnique({
+    where: {
+      id: userId || '',
+    },
+    select: {
+      maxFileSize: true,
+    },
+  });
 
   const isOwner = userId === file.ownerId;
 
@@ -42,9 +52,9 @@ export default async function File({ params }: FileProps) {
             <DownloadButton url={`/api/share?id=${id}`} name={file.name}>
               <AnchorButton>Stáhnout</AnchorButton>
             </DownloadButton>
-            {isOwner && (
+            {isOwner && currentUser && (
               <>
-                <EditFile id={id} />
+                <EditFile maxFileSize={Number(currentUser.maxFileSize)} id={id} />
                 <EditAccess id={id} isPublicDefault={file.public} viewersDefault={await getViewers(id)} />
               </>
             )}
