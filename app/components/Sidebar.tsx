@@ -1,10 +1,21 @@
 'use server';
 
 import SidebarClient from '@/app/components/SidebarClient';
-import { getCurrentUsername } from '@/app/utilities/dto/user';
+import { getCurrentUserId } from '@/app/actions/session';
+import prisma from '@/app/utilities/prisma';
 
 export default async function Sidebar() {
-  const username = await getCurrentUsername();
+  const userId = await getCurrentUserId();
 
-  return <SidebarClient user={username ? { username: username } : undefined} />;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId ? userId : '',
+    },
+    select: {
+      username: true,
+      email: true,
+    },
+  });
+
+  return <SidebarClient user={user ? user : undefined} />;
 }
