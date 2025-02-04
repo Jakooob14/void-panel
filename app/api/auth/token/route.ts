@@ -45,13 +45,6 @@ async function refresh(refreshToken: string) {
 
     const sessionId = await createSession(refresh.userId);
     const res = NextResponse.json({ message: 'Authentication successful', session: refresh });
-    // res.cookies.set('accessToken', sessionId, {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: 'strict',
-    //   path: '/',
-    //   maxAge: 1800,
-    // });
     res.headers.append('Set-Cookie', `accessToken=${sessionId}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=1800`);
     return res;
   } catch (err: any) {

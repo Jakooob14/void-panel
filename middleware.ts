@@ -33,7 +33,11 @@ export default async function middleware(req: NextRequest) {
     session = (await session.json()).session;
   }
 
-  if (cookie) res.headers.append('Set-Cookie', cookie);
+  if (cookie) {
+    const tempRes = NextResponse.redirect(req.nextUrl.href);
+    tempRes.headers.append('Set-Cookie', cookie);
+    return tempRes;
+  }
 
   const isProtectedRoute = !allowedRoutes.some((pattern) => pattern.test(req.nextUrl.pathname));
   const isLoginRoute = loginRoutes.includes(req.nextUrl.pathname);

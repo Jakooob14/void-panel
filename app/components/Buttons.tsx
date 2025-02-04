@@ -16,14 +16,14 @@ interface LinkProps extends DefaultProps {
 
 export function LinkButton({ children, className, href, rel = 'noreferrer', ...props }: LinkProps) {
   return (
-    <Link className={'px-4 py-1.5 bg-aero-500 !text-black transition-[background] hover:bg-aero-600 ' + className} href={href} rel={rel} {...props}>
+    <Link className={'block px-4 py-1.5 bg-aero-500 !text-black transition-[background] hover:bg-aero-600 ' + className} href={href} rel={rel} {...props}>
       {children}
     </Link>
   );
 }
 export function AnchorButton({ children, className, onClick, ...props }: DefaultProps) {
   return (
-    <a className={'px-4 py-1.5 bg-aero-500 !text-black transition-[background] hover:bg-aero-600 cursor-pointer ' + className} onClick={onClick} {...props}>
+    <a className={'block px-4 py-1.5 bg-aero-500 !text-black transition-[background] hover:bg-aero-600 cursor-pointer ' + className} onClick={onClick} {...props}>
       {children}
     </a>
   );
@@ -32,7 +32,7 @@ export function AnchorButton({ children, className, onClick, ...props }: Default
 export function OutlineButton({ children, className, onClick, ...props }: DefaultProps) {
   return (
     <a
-      className={'text-white border-aero-500 border-2 px-[14px] py-[4px] transition-all hover:!text-black hover:bg-aero-600 hover:border-aero-600 cursor-pointer ' + className}
+      className={'block text-white border-aero-500 border-2 px-[14px] py-[4px] transition-all hover:!text-black hover:bg-aero-600 hover:border-aero-600 cursor-pointer ' + className}
       onClick={onClick}
       {...props}
     >

@@ -38,7 +38,7 @@ export default function ProfileClient({ name, email }: ProfileProps) {
   return (
     <main className={'flex flex-col gap-8 justify-center items-center min-h-screen'}>
       <Heading1>Profil</Heading1>
-      <form className={'flex flex-col w-[320px] gap-3'} onSubmit={handleSave}>
+      <form className={'flex flex-col w-[350px] gap-3'} onSubmit={handleSave}>
         <Input label={'Uživatelské jméno'} defaultValue={name} placeholder={name} name={'username'} autoComplete={'username'} />
         <Input label={'E-Mail'} defaultValue={email} placeholder={email} name={'email'} autoComplete={'email'} />
         <OutlineButton
