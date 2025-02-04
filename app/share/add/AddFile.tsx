@@ -5,7 +5,6 @@ import { useToast } from '@/app/components/ToastController';
 import { Input, InputInnerLabel } from '@/app/components/Form';
 import formatBytes from '@/app/utilities/formatBytes';
 import { FaFileUpload } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
 
 interface AddFileProps extends HTMLAttributes<HTMLDivElement> {
   onUpload?: () => void;
@@ -18,7 +17,7 @@ export default function AddFile({ onUpload, className, editId, maxFileSize, ...p
   const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const router = useRouter();
+  const [isUploading, setIsUploading] = useState(false);
 
   const showToast = useToast();
 
@@ -54,7 +53,7 @@ export default function AddFile({ onUpload, className, editId, maxFileSize, ...p
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!file) return;
+    if (!file || isUploading) return;
 
     if (file.size > maxFileSize && Number(maxFileSize) !== -1) {
       showToast('Přesažena maximální velikost souboru');
@@ -65,6 +64,8 @@ export default function AddFile({ onUpload, className, editId, maxFileSize, ...p
     formData.append('file', file);
 
     const xhr = new XMLHttpRequest();
+
+    setIsUploading(true);
 
     new Promise((resolve) => {
       xhr.upload.addEventListener('progress', (event) => {
@@ -79,6 +80,7 @@ export default function AddFile({ onUpload, className, editId, maxFileSize, ...p
         setUploadProgress(100);
         if (onUpload) onUpload();
         resolve(xhr.readyState === 4 && xhr.status === 200);
+        setIsUploading(false);
         if (editId) window.location.reload();
       });
       if (editId) {

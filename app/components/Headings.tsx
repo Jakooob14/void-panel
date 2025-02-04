@@ -9,10 +9,7 @@ interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {
 
 export function Heading1({ children, className = '', ...props }: HeadingProps) {
   return (
-    <h1
-      className={'text-[max(60px,15vw)] sm:text-8xl w-fit tracking-wider -ms-1 font-bold bg-clip-text text-transparent bg-[linear-gradient(90deg,#19b9e6_0%,#41caef_100%)] pb-2 ' + className}
-      {...props}
-    >
+    <h1 className={'text-[max(60px,15vw)] sm:text-8xl w-fit tracking-wider -ms-1 font-bold bg-clip-text text-transparent bg-aeroGradient pb-2 ' + className} {...props}>
       {children}
     </h1>
   );

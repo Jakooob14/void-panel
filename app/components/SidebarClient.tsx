@@ -11,12 +11,14 @@ import { IoPersonSharp } from 'react-icons/io5';
 import { IoMdHome } from 'react-icons/io';
 import { RiFolder6Fill } from 'react-icons/ri';
 import { FaUserPlus } from 'react-icons/fa6';
+import Image from 'next/image';
 
 interface SidebarProps {
   user?: {
     username: string;
     email: string;
-  };
+    avatar: string;
+  } | null;
 }
 
 export default function SidebarClient({ user }: SidebarProps) {
@@ -103,15 +105,19 @@ function SidebarProfile({ handleLogout, user }: SidebarProfileProps) {
     return () => window.removeEventListener('click', callback);
   }, []);
 
+  if (!user) return null;
+
   return (
     <div ref={accountMenuRef}>
       <motion.div
         className={'bg-alt-gray-50 p-6 absolute bottom-full w-full transition-all shadow-lg'}
         initial={{
           opacity: 0,
+          display: 'none',
         }}
         animate={{
           opacity: isAccountMenuOpen ? 1 : 0,
+          display: isAccountMenuOpen ? 'block' : 'none',
         }}
         transition={{
           duration: 0.07,
@@ -139,7 +145,7 @@ function SidebarProfile({ handleLogout, user }: SidebarProfileProps) {
         </ul>
       </motion.div>
       <div className={'flex items-center p-4 transition-colors hover:bg-alt-gray-50 cursor-default'} onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}>
-        <div className={'min-w-[48px] h-[48px] bg-[linear-gradient(90deg,#19b9e6_0%,#41caef_100%)] rounded-full'}></div>
+        <Image className={'min-w-[48px] h-[48px] bg-aeroGradient rounded-full overflow-hidden'} width={48} height={48} src={user.avatar} alt={'Avatar'} unoptimized={true} />
         <div className={'flex flex-col ps-4 truncate'}>
           <span className={'truncate'} title={user?.username}>
             {user?.username}

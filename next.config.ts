@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
         pathname: '/assets/**',
       },
     ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'gravatar.com',
+        pathname: '/avatar/**',
+      },
+    ],
   },
 };
 

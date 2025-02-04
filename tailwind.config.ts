@@ -52,6 +52,7 @@ export default {
       },
       backgroundImage: {
         gridPattern: "url('/diagonal-stripes.svg')",
+        aeroGradient: 'linear-gradient(90deg, #19b9e6 0%, #41caef 100%)',
       },
       fontFamily: {
         heading: "'Montserrat', sans-serif",
