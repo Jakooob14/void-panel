@@ -184,35 +184,3 @@ export async function changePassword(oldPassword: string, newPassword: string, n
     return 'Chyba serveru';
   }
 }
-
-export async function changeProfileDetails(confirmPassword: string, username?: string, email?: string) {
-  const rate = await createOrUpdateRate();
-  if (rate > 10) return 'Zpomal trochu!';
-
-  const userId = await getCurrentUserId();
-  if (!userId) return false;
-
-  if (email && !email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
-    return 'Neplatný formát e-mailu';
-  }
-
-  try {
-    const isPasswordCorrect = await confirmCurrentUserPassword(confirmPassword);
-    if (!isPasswordCorrect) return 'Nesprávné heslo!';
-
-    const record = await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        username,
-        email,
-      },
-    });
-  } catch (err: any) {
-    console.error(err.stack);
-    return 'Chyba serveru';
-  }
-
-  return true;
-}

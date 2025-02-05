@@ -3,7 +3,8 @@
 import SidebarClient from '@/app/components/SidebarClient';
 import { getCurrentUserId } from '@/app/actions/session';
 import prisma from '@/app/utilities/prisma';
-import crypto from 'crypto';
+import { getGravatar } from '@/app/utilities/avatar';
+import { getAvatar } from '@/app/actions/user';
 
 export default async function Sidebar() {
   const userId = await getCurrentUserId();
@@ -18,7 +19,7 @@ export default async function Sidebar() {
     },
   });
 
-  const avatarUrl = `https://gravatar.com/avatar/${crypto.hash('sha256', user ? user.email.trim().toLowerCase() : 'too-bad')}?s=48&d=identicon`;
+  const avatarUrl = getGravatar(user?.email || 'too-bad');
 
-  return <SidebarClient user={user ? { username: user?.username || '', email: user?.email || '', avatar: avatarUrl } : null} />;
+  return <SidebarClient user={user ? { username: user?.username || '', email: user?.email || '', avatar: (await getAvatar()) || avatarUrl } : null} />;
 }

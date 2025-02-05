@@ -145,7 +145,14 @@ function SidebarProfile({ handleLogout, user }: SidebarProfileProps) {
         </ul>
       </motion.div>
       <div className={'flex items-center p-4 transition-colors hover:bg-alt-gray-50 cursor-default'} onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}>
-        <Image className={'min-w-[48px] h-[48px] bg-aeroGradient rounded-full overflow-hidden'} width={48} height={48} src={user.avatar} alt={'Avatar'} unoptimized={true} />
+        <Image
+          className={'min-w-[48px] h-[48px] bg-aeroGradient rounded-full overflow-hidden border-2 shadow border-alt-gray-400 object-cover'}
+          width={48}
+          height={48}
+          src={user.avatar}
+          alt={'Avatar'}
+          unoptimized={true}
+        />
         <div className={'flex flex-col ps-4 truncate'}>
           <span className={'truncate'} title={user?.username}>
             {user?.username}

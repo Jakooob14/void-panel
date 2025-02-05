@@ -23,6 +23,7 @@ services:
       - database_database
     volumes:
       - ./share:/app/share
+      - ./avatars:/app/avatars
     env_file:
       - .env
 

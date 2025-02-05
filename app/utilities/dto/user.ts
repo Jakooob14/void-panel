@@ -69,18 +69,3 @@ export async function getUserTotalFilesSize() {
 
   return totalSize;
 }
-
-export async function getProfile() {
-  const userId = await getCurrentUserId();
-  if (!userId) return null;
-
-  return prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      username: true,
-      email: true,
-    },
-  });
-}
