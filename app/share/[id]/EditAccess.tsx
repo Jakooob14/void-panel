@@ -40,6 +40,7 @@ function AccessModal({ id, isPublicDefault, viewersDefault, onClose }: AccessMod
       const publicResult = await setPublic(id, isPublic);
       if (publicResult === true) {
         showToast('Úspěšně změněna věřejnost.');
+        onClose();
         return;
       }
       showToast(publicResult as string);
