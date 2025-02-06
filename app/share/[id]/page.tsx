@@ -76,11 +76,11 @@ export default async function File({ params }: FileProps) {
               <>
                 <EditFile maxFileSize={Number(currentUser.maxFileSize)} id={id} />
                 <EditAccess id={id} isPublicDefault={file.public} viewersDefault={await getViewers(id)} />
+                <DeleteButton className={'cursor-pointer'} id={id}>
+                  Vymáznout
+                </DeleteButton>
               </>
             )}
-            <DeleteButton className={'cursor-pointer'} id={id}>
-              Vymáznout
-            </DeleteButton>
           </div>
           {isImage && <Image unoptimized={true} src={`/api/share?id=${id}&w=500`} alt={file.name} width={500} height={500} className={'w-[80%] max-w-[1000px]'} />}
         </div>
