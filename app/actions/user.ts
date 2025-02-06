@@ -304,7 +304,7 @@ export async function getAvatar() {
     return `data:image/jpeg;base64,${file.toString('base64')}`;
   } catch (err: any) {
     if (err.errno == -4058) return null;
-    console.error(err);
+    // console.error(err);
     return null;
   }
 }
