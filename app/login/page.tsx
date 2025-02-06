@@ -3,7 +3,8 @@
 import { Input } from '@/app/components/Form';
 import { FormEvent, useState } from 'react';
 import { Heading1 } from '@/app/components/Headings';
-import { login } from '@/app/actions/auth';
+
+import { login } from '@/app/actions/user';
 
 export default function Login() {
   const [errorMessage, setErrorMessage] = useState<string>(' ');

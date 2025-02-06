@@ -2,7 +2,6 @@
 
 import { AnchorButton, LinkButton } from '@/app/components/Buttons';
 import { Heading1 } from '@/app/components/Headings';
-import { logout } from '@/app/actions/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
@@ -12,6 +11,7 @@ import { IoMdHome } from 'react-icons/io';
 import { RiFolder6Fill } from 'react-icons/ri';
 import { FaUserPlus } from 'react-icons/fa6';
 import Image from 'next/image';
+import { logout } from '@/app/actions/user';
 
 interface SidebarProps {
   user?: {

@@ -30,7 +30,7 @@ interface AccessModalProps extends EditAccessProps {
   onClose: () => void;
 }
 
-function AccessModal({ id, isPublicDefault, viewersDefault }: AccessModalProps) {
+function AccessModal({ id, isPublicDefault, viewersDefault, onClose }: AccessModalProps) {
   const showToast = useToast();
   const [isPublic, setIsPublic] = useState(isPublicDefault);
   const [localViewers, setLocalViewers] = useState<string[]>(viewersDefault);
@@ -50,6 +50,7 @@ function AccessModal({ id, isPublicDefault, viewersDefault }: AccessModalProps) 
 
     if (result === true) {
       showToast('Úspěšně uloženo.');
+      onClose();
       return;
     }
 

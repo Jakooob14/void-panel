@@ -6,7 +6,10 @@ import Client from '@/app/Client';
 import Sidebar from '@/app/components/Sidebar';
 
 export const metadata: Metadata = {
-  title: 'Void Panel',
+  title: {
+    default: 'Void Panel',
+    template: '%s - Void Panel',
+  },
 };
 
 export default async function RootLayout({

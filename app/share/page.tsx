@@ -1,5 +1,3 @@
-'use server';
-
 import File from '@/app/share/File';
 import AddFileButton from '@/app/share/AddFileButton';
 import { getUserFiles, getUserTotalFilesSize } from '@/app/utilities/dto/user';
@@ -10,6 +8,11 @@ import { redirect } from 'next/navigation';
 import formatBytes from '@/app/utilities/formatBytes';
 import { readFileAsPromise } from '@/app/utilities/fileHelpers';
 import prisma from '@/app/utilities/prisma';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Share',
+};
 
 export default async function Share() {
   const userId = await getCurrentUserId();

@@ -1,5 +1,3 @@
-'use server';
-
 import { Heading1 } from '@/app/components/Headings';
 import DownloadButton from '@/app/share/DownloadButton';
 import { AnchorButton } from '@/app/components/Buttons';
@@ -12,9 +10,31 @@ import EditAccess from '@/app/share/[id]/EditAccess';
 import { getCurrentUserId } from '@/app/actions/session';
 import EditFile from '@/app/share/[id]/EditFile';
 import prisma from '@/app/utilities/prisma';
+import type { Metadata, ResolvingMetadata } from 'next';
+import { getBaseUrl } from '@/app/utilities/general';
 
 interface FileProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: FileProps, parent: ResolvingMetadata): Promise<Metadata> {
+  const { id } = await params;
+
+  const file = await getFile(id);
+  if (!file) return {};
+
+  const startDataArray = await readFileAsPromise(file.path + id, { start: 16, end: 20 });
+  const startData = Buffer.concat(startDataArray.map((chunk) => (typeof chunk === 'string' ? Buffer.from(chunk) : chunk)));
+
+  const mimeType = getMimeType(startData);
+  const isImage = mimeType?.startsWith('image/');
+
+  return {
+    title: file.name,
+    openGraph: {
+      images: isImage ? [`${await getBaseUrl()}/api/share?id=${id}&w=500`] : [],
+    },
+  };
 }
 
 export default async function File({ params }: FileProps) {

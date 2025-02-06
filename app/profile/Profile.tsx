@@ -3,14 +3,14 @@
 import { Input } from '@/app/components/Form';
 import { OutlineButton } from '@/app/components/Buttons';
 import { useModal } from '@/app/components/ModalController';
-import { changePassword } from '@/app/actions/auth';
 import { FormEvent, useRef, useState } from 'react';
 import { Heading1 } from '@/app/components/Headings';
 import { useToast } from '@/app/components/ToastController';
-import { changeAvatar, changeProfileDetails } from '@/app/actions/user';
+import { changeAvatar, changePassword, changeProfileDetails, deleteAccount } from '@/app/actions/user';
 import Image from 'next/image';
 import { FaPen } from 'react-icons/fa';
 import formatBytes from '@/app/utilities/formatBytes';
+import { useRouter } from 'next/navigation';
 
 interface ProfileProps {
   name: string;
@@ -133,10 +133,11 @@ export default function ProfileClient({ name, email, avatar }: ProfileProps) {
             </div>
           </div>
         </div>
+        <hr className={'border-alt-gray-250 border-t-2 my-1'} />
         <Input label={'Uživatelské jméno'} defaultValue={name} placeholder={name} name={'username'} autoComplete={'username'} />
         <Input label={'E-Mail'} defaultValue={email} placeholder={email} name={'email'} autoComplete={'email'} />
         <OutlineButton
-          className={'mt-2'}
+          className={'mt-2 !py-2'}
           onClick={() => {
             showModal(false, <PasswordChangeForm onClose={closeModal} />, 'Změna hesla');
           }}
@@ -147,17 +148,24 @@ export default function ProfileClient({ name, email, avatar }: ProfileProps) {
           <Input label={'Ověření hesla'} type={'password'} name={'password'} autoComplete={'current-password'} />
         </span>
         <Input type={'submit'} value={'Uložit'} />
+        <hr className={'border-alt-gray-250 border-t-2 my-1'} />
+        <OutlineButton
+          className={'!py-2 border-red-500 hover:border-red-600 hover:bg-red-600 hover:!text-white'}
+          onClick={() => showModal(false, <DeleteAccountModal onClose={closeModal} />, 'Opravdu?')}
+        >
+          Odstranit účet
+        </OutlineButton>
         <span className={'text-sm text-red-500'}>{errorMessage}</span>
       </form>
     </main>
   );
 }
 
-interface PasswordChangeFormProps {
+interface ModalProps {
   onClose: () => void;
 }
 
-function PasswordChangeForm({ onClose }: PasswordChangeFormProps) {
+function PasswordChangeForm({ onClose }: ModalProps) {
   const [errorMessage, setErrorMessage] = useState<string | string[]>(' ');
 
   const handlePasswordChange = async (e: FormEvent<HTMLFormElement>) => {
@@ -178,7 +186,7 @@ function PasswordChangeForm({ onClose }: PasswordChangeFormProps) {
   };
 
   return (
-    <form className={'mb-6 flex flex-col gap-3'} onSubmit={handlePasswordChange}>
+    <form className={'mt-3 flex flex-col gap-3'} onSubmit={handlePasswordChange}>
       <Input type={'password'} label={'Aktuální heslo'} name={'currentPassword'} autoComplete={'current-password'} />
       <Input type={'password'} label={'Nové heslo'} name={'newPassword'} autoComplete={'new-password'} />
       <Input type={'password'} label={'Nové heslo znovu'} name={'newPasswordAgain'} autoComplete={'new-password'} />
@@ -198,6 +206,51 @@ function PasswordChangeForm({ onClose }: PasswordChangeFormProps) {
         <span className={'text-sm text-red-500'}>{errorMessage}</span>
       )}
       <span className={'text-sm text-alt-gray-700'}>Tato akce tě odhlásí ze všech zařízení včetně tohoto</span>
+    </form>
+  );
+}
+
+function DeleteAccountModal({ onClose }: ModalProps) {
+  const [errorMessage, setErrorMessage] = useState<string | string[]>(' ');
+  const router = useRouter();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log('sex');
+
+    const form = e.target as HTMLFormElement;
+    const username = (form.elements.namedItem('username') as HTMLInputElement).value;
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+
+    const result = await deleteAccount(username, password);
+
+    setErrorMessage(typeof result === 'string' || typeof result === 'object' ? result : '');
+
+    if (result === true) {
+      onClose();
+      router.push('/');
+    }
+  };
+
+  return (
+    <form className={'mt-3 flex flex-col gap-3'} onSubmit={handleSubmit}>
+      <Input label={'Uživatelské jméno'} type={'username'} name={'username'} />
+      <Input label={'Heslo'} type={'password'} name={'password'} autoComplete={'current-password'} />
+      <div className={'flex gap-3 items-center'}>
+        <Input type={'submit'} value={'Potvrdit'} className={'!w-min !border-0 !px-4 !py-1 !bg-red-500 transition-[background] !text-white hover:!bg-red-600 hover:!text-white cursor-pointer'} />
+        <span className={'cursor-pointer'} onClick={onClose}>
+          Zrušit
+        </span>
+      </div>
+      {typeof errorMessage === 'object' && errorMessage.length > 0 ? (
+        <ul className={'text-sm text-red-500'}>
+          {errorMessage.map((item, index) => (
+            <li key={index}>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <span className={'text-sm text-red-500'}>{errorMessage}</span>
+      )}
     </form>
   );
 }
