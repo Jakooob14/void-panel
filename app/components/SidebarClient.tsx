@@ -12,6 +12,7 @@ import { RiFolder6Fill } from 'react-icons/ri';
 import { FaUserPlus } from 'react-icons/fa6';
 import Image from 'next/image';
 import { logout } from '@/app/actions/user';
+import { MdShield } from 'react-icons/md';
 
 interface SidebarProps {
   user?: {
@@ -19,9 +20,12 @@ interface SidebarProps {
     email: string;
     avatar: string;
   } | null;
+  permissions: {
+    viewAdminPanel: boolean;
+  };
 }
 
-export default function SidebarClient({ user }: SidebarProps) {
+export default function SidebarClient({ user, permissions }: SidebarProps) {
   const router = useRouter();
 
   const handleLogout = () => {
@@ -49,6 +53,14 @@ export default function SidebarClient({ user }: SidebarProps) {
                   <RiFolder6Fill className={'text-xl'} />
                 </LinkButton>
               </li>
+              {permissions.viewAdminPanel && (
+                <li>
+                  <LinkButton className={'w-full flex justify-between items-center'} href={'/admin'}>
+                    Administrace
+                    <MdShield className={'text-xl'} />
+                  </LinkButton>
+                </li>
+              )}
             </>
           )}
         </ul>
@@ -80,7 +92,12 @@ export default function SidebarClient({ user }: SidebarProps) {
   );
 }
 
-interface SidebarProfileProps extends SidebarProps {
+interface SidebarProfileProps {
+  user?: {
+    username: string;
+    email: string;
+    avatar: string;
+  } | null;
   handleLogout: () => void;
 }
 

@@ -1,4 +1,9 @@
+import Loader from '@/app/components/Loader';
+
 export default function Loading() {
-  // You can add any UI inside Loading, including a Skeleton.
-  return <span>Loading...</span>;
+  return (
+    <div className={'w-full h-screen flex justify-center items-center'}>
+      <Loader className={'!scale-[1.4]'} />
+    </div>
+  );
 }

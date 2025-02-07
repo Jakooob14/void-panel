@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
     const safeFileName = path.basename(file.name);
     const uuid = uuidv4();
 
-    const storage = await verifyStorage(userId, file.size, buffer.length);
+    const storage = await verifyStorage(userId, file.size);
     if (storage !== true) return storage;
 
     await fs.writeFile('share/' + uuid, encryptFileBuffer(buffer));
@@ -122,6 +122,7 @@ export async function POST(req: NextRequest) {
       data: {
         id: uuid,
         name: safeFileName,
+        size: file.size,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         path: 'share/',
         owner: {
@@ -162,7 +163,7 @@ export async function PUT(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
     const safeFileName = path.basename(file.name);
 
-    const storage = await verifyStorage(userId, file.size, buffer.length);
+    const storage = await verifyStorage(userId, file.size);
     if (storage !== true) return storage;
 
     const record = await prisma.file.update({
@@ -172,6 +173,7 @@ export async function PUT(req: NextRequest) {
       },
       data: {
         name: safeFileName,
+        size: file.size,
       },
     });
 
@@ -208,7 +210,7 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-async function verifyStorage(userId: string, fileSize: number, bufferLength: number) {
+async function verifyStorage(userId: string, fileSize: number) {
   const currentUser = await prisma.user.findUnique({
     where: {
       id: userId,
@@ -228,7 +230,7 @@ async function verifyStorage(userId: string, fileSize: number, bufferLength: num
 
   const totalSize = await getUserTotalFilesSize();
   if (totalSize === null || !currentUser.maxStorage) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
-  if (totalSize + bufferLength > currentUser.maxStorage) return NextResponse.json({ message: 'Insufficient storage' }, { status: 413 });
+  if (totalSize > currentUser.maxStorage) return NextResponse.json({ message: 'Insufficient storage' }, { status: 413 });
 
   return true;
 }

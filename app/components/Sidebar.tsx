@@ -5,6 +5,7 @@ import { getCurrentUserId } from '@/app/actions/session';
 import prisma from '@/app/utilities/prisma';
 import { getGravatar } from '@/app/utilities/avatar';
 import { getAvatar } from '@/app/actions/user';
+import { GeneralPermissions, isAllowed } from '@/app/utilities/permissions';
 
 export default async function Sidebar() {
   const userId = await getCurrentUserId();
@@ -21,5 +22,10 @@ export default async function Sidebar() {
 
   const avatarUrl = getGravatar(user?.email || 'too-bad');
 
-  return <SidebarClient user={user ? { username: user?.username || '', email: user?.email || '', avatar: (await getAvatar()) || avatarUrl } : null} />;
+  return (
+    <SidebarClient
+      user={user ? { username: user?.username || '', email: user?.email || '', avatar: (await getAvatar()) || avatarUrl } : null}
+      permissions={{ viewAdminPanel: await isAllowed(GeneralPermissions.viewAdminPanel) }}
+    />
+  );
 }

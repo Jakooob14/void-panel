@@ -1,7 +1,6 @@
 import 'server-only';
 import { getCurrentUserId } from '@/app/actions/session';
 import prisma from '@/app/utilities/prisma';
-import fs from 'fs/promises';
 
 export async function getCurrentUsername() {
   const userId = await getCurrentUserId();
@@ -35,37 +34,19 @@ export async function getUserFiles() {
   return user?.files;
 }
 
-export async function getUserTotalFilesSize() {
-  const userId = await getCurrentUserId();
+export async function getUserTotalFilesSize(userIdToCheck?: string | null): Promise<number | null> {
+  let userId = userIdToCheck;
+  if (!userId) userId = await getCurrentUserId();
   if (!userId) return null;
 
-  const user = await prisma.user.findUnique({
+  const totalSize = await prisma.file.aggregate({
     where: {
-      id: userId,
+      ownerId: userId,
     },
-    select: {
-      files: true,
+    _sum: {
+      size: true,
     },
   });
 
-  if (!user) return 0;
-
-  let totalSize = 0;
-
-  for (const file of user.files) {
-    const filePath = file.path + file.id;
-    const exists = await fs
-      .access(filePath)
-      .then(() => true)
-      .catch(() => false);
-
-    if (!exists) {
-      continue;
-    }
-
-    const stats = await fs.stat(file.path + file.id);
-    totalSize += stats.size;
-  }
-
-  return totalSize;
+  return Number(totalSize._sum.size || 0);
 }
