@@ -210,7 +210,7 @@ export async function deleteAccount(username: string, password: string) {
     const isCorrect = await bcrypt.compare(password, record.password);
 
     if (isCorrect) {
-      await destroySession();
+      await destroyAllUserSessions();
 
       await prisma.file.deleteMany({
         where: {

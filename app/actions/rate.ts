@@ -7,7 +7,7 @@ const SESSION_PREFIX = 'rate';
 
 export async function createOrUpdateRate() {
   const hds = await headers();
-  let ip = hds.get('cf-connecting-ip');
+  let ip = hds.get('x-real-ip');
   if (!ip) throw new Error('No cf-connecting-ip header');
 
   ip = ip.replaceAll(':', '-');

@@ -7,14 +7,14 @@ const allowedRoutes = [/^\/$/, /^\/login$/, /^\/signup$/, /^\/share\/[^/]+$/];
 const loginRoutes = ['/login', '/signup'];
 
 export default async function middleware(req: NextRequest) {
-  if (process.env.NODE_ENV === 'production' && (!req.headers.get('cf-connecting-ip') || req.headers.get('host') !== 'void.jakooob.dev')) {
-    return NextResponse.json('Na stránku je možné vstoupit jen přes void.jakooob.dev. Pokud tak je, tak mě kontaktujte na sokoljakub14@gmail.com.');
-  }
+  // if (process.env.NODE_ENV === 'production' && (!req.headers.get('cf-connecting-ip') || req.headers.get('host') !== 'void.jakooob.dev')) {
+  //   return NextResponse.json('Na stránku je možné vstoupit jen přes void.jakooob.dev. Pokud tak je, tak mě kontaktujte na sokoljakub14@gmail.com.');
+  // }
 
   const res = NextResponse.next();
   res.headers.set('X-Pathname', req.nextUrl.pathname);
 
-  res.headers.set('cf-connecting-ip', process.env.NODE_ENV === 'production' ? req.headers.get('cf-connecting-ip') || '' : 'dev');
+  res.headers.set('x-real-ip', process.env.NODE_ENV === 'production' ? req.headers.get('x-real-ip') || '' : 'dev');
 
   const cks = await cookies();
   const accessToken = cks.get('accessToken')?.value || cks.get('refreshToken')?.value;
@@ -47,7 +47,7 @@ export default async function middleware(req: NextRequest) {
   if (isProtectedRoute && !session) {
     const response = NextResponse.redirect(new URL('/login', req.url));
     response.headers.set('X-Pathname', req.nextUrl.pathname);
-    response.headers.set('cf-connecting-ip', process.env.NODE_ENV === 'production' ? req.headers.get('cf-connecting-ip') || '' : 'dev');
+    response.headers.set('x-real-ip', process.env.NODE_ENV === 'production' ? req.headers.get('x-real-ip') || '' : 'dev');
     return response;
   }
 
@@ -56,7 +56,7 @@ export default async function middleware(req: NextRequest) {
     const response = NextResponse.redirect(new URL(nextRoute, req.url));
     if (cookie) response.headers.append('Set-Cookie', cookie);
     response.headers.set('X-Pathname', req.nextUrl.pathname);
-    response.headers.set('cf-connecting-ip', '2a02:8309:4286:3000:1047:63cf:6d95:c1fd');
+    response.headers.set('x-real-ip', process.env.NODE_ENV === 'production' ? req.headers.get('x-real-ip') || '' : 'dev');
     return response;
   }
 

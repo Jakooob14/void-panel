@@ -216,7 +216,6 @@ function DeleteAccountModal({ onClose }: ModalProps) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('sex');
 
     const form = e.target as HTMLFormElement;
     const username = (form.elements.namedItem('username') as HTMLInputElement).value;
