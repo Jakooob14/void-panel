@@ -62,6 +62,12 @@ export async function signup(username: string, email: string, password: string, 
       },
     });
 
+    await prisma.userWhitelist.delete({
+      where: {
+        email,
+      },
+    });
+
     const sessionId = await createSession(record.id);
     const refreshId = await createSession(record.id, 'refresh', 2592000);
 
