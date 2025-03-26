@@ -1,9 +1,6 @@
 FROM node:20-alpine
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
-RUN apk update
-
-RUN apk add wakeonlan
+RUN apk add wakeonlan --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
 
 ARG BASE_URL
 ARG SERVER_HOST
