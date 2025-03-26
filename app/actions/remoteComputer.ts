@@ -51,7 +51,12 @@ export async function startComputer(): Promise<boolean> {
         return;
       }
 
-      resolve(true);
+      if (stdout.includes('Sending magic packet')) {
+        resolve(true);
+        return;
+      }
+
+      resolve(false);
     });
   });
 }
