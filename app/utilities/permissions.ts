@@ -4,6 +4,7 @@ import prisma from '@/app/utilities/prisma';
 
 export enum GeneralPermissions {
   viewAdminPanel = 'view:admin_panel',
+  accessRemoteComputer = 'view:admin_panel', // TODO: access:remote_computer
 }
 
 export enum FilePermissions {

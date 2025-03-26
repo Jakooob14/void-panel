@@ -10,7 +10,7 @@ type ToastType = {
   duration: number;
 };
 
-const ToastContext = createContext<(message: string, duration?: number) => void>(() => {});
+const ToastContext = createContext<(message: unknown, duration?: number) => void>(() => {});
 
 export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastType[]>([]);
