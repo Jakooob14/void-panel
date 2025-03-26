@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-RUN apk add --no-cache wakeonlan iputils
+RUN apk add --no-cache etherwake
 
 ARG BASE_URL
 ARG SERVER_HOST
