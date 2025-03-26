@@ -1,5 +1,7 @@
 FROM node:20-alpine
 
+RUN apk add --no-cache wakeonlan iputils
+
 ARG BASE_URL
 ARG SERVER_HOST
 ARG DATABASE_URL
