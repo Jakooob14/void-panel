@@ -4,6 +4,7 @@ import prisma from '@/app/utilities/prisma';
 
 export enum GeneralPermissions {
   viewAdminPanel = 'view:admin_panel',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   accessRemoteComputer = 'view:admin_panel', // TODO: access:remote_computer
 }
 
