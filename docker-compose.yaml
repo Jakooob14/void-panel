@@ -21,7 +21,6 @@ services:
     networks:
       - database_redis
       - database_database
-    network_mode: "host"
     volumes:
       - ./share:/app/share
       - ./avatars:/app/avatars
