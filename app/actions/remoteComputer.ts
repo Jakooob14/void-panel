@@ -38,7 +38,7 @@ export async function startComputer(): Promise<boolean> {
   if (!(await isAllowed(GeneralPermissions.accessRemoteComputer))) throw new Error('Unauthorized');
 
   return new Promise((resolve, reject) => {
-    exec('bash ./app/commands/wol.sh', (error, stdout, stderr) => {
+    exec('sh ./app/commands/wol.sh', (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
         resolve(false);
