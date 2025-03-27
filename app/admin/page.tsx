@@ -4,7 +4,6 @@ import { Heading1, Heading2 } from '@/app/components/Headings';
 import prisma from '@/app/utilities/prisma';
 import { getUserTotalFilesSize } from '@/app/utilities/dto/user';
 import formatBytes from '@/app/utilities/formatBytes';
-import RemoteComputerStart from '@/app/admin/RemoteComputerStart';
 
 export default async function Admin() {
   if (!(await isAllowed(GeneralPermissions.viewAdminPanel))) redirect('/');
@@ -14,7 +13,6 @@ export default async function Admin() {
   return (
     <main>
       <Heading1>Administrace</Heading1>
-      <RemoteComputerStart />
       <div>
         <Heading2>Soubory</Heading2>
         <table className={'w-full my-4'}>
