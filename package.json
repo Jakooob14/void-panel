@@ -17,7 +17,7 @@
     "ioredis": "^5.4.2",
     "prisma": "^6.3.0",
     "react-icons": "^5.4.0",
-    "next": "15.1.4",
+    "next": "15.2.4",
     "node-cron": "^3.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
