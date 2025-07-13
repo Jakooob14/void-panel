@@ -223,10 +223,10 @@ async function verifyStorage(userId: string, fileSize: number) {
 
   if (!currentUser) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
 
-  if (Number(currentUser.maxFileSize) !== -1 && fileSize > currentUser.maxFileSize) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
-  if (Number(currentUser.maxFileSize) === -1 && Number(currentUser.maxStorage) !== -1 && fileSize > currentUser.maxStorage) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
-
   if (Number(currentUser.maxStorage) === -1) return true;
+
+  if (fileSize > currentUser.maxFileSize) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
+  if (fileSize > currentUser.maxStorage) return NextResponse.json({ message: 'Payload Too Large' }, { status: 413 });
 
   const totalSize = await getUserTotalFilesSize();
   if (totalSize === null || !currentUser.maxStorage) return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
