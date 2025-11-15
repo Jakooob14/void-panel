@@ -34,7 +34,7 @@ export default function Login() {
       <div className={'flex flex-col justify-center items-center gap-8'}>
         <Heading1>Přihlášení</Heading1>
         <form className={'flex flex-col w-[350px] gap-4'} onSubmit={handleSubmit}>
-          <Input className={'w-full'} name='usernameEmail' placeholder='Uživatelské jméno / E-Mail' autoComplete={'username'} />
+          <Input className={'w-full'} name='usernameEmail' placeholder='Uživatelské jméno' autoComplete={'username'} />
           <Input className={'w-full'} name='password' type='password' placeholder='Heslo' autoComplete={'current-password'} />
           {/* TODO: Captcha */}
           <Input className={'w-full'} type='submit' value='Přihlásit' />

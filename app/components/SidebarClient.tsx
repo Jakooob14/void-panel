@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { ImEnter, ImExit } from 'react-icons/im';
 import { IoPersonSharp } from 'react-icons/io5';
-import { IoMdHome } from 'react-icons/io';
 import { RiFolder6Fill } from 'react-icons/ri';
 import { FaUserPlus } from 'react-icons/fa6';
 import Image from 'next/image';
@@ -39,12 +38,12 @@ export default function SidebarClient({ user, permissions }: SidebarProps) {
       <div>
         <Heading1 className={'!text-4xl'}>Void Panel</Heading1>
         <ul className={'mt-5 flex flex-col gap-6 w-[100%]'}>
-          <li>
-            <LinkButton className={'w-full flex justify-between items-center'} href={'/'}>
-              Domů
-              <IoMdHome className={'-me-0.5 text-2xl'} />
-            </LinkButton>
-          </li>
+          {/*<li>*/}
+          {/*  <LinkButton className={'w-full flex justify-between items-center'} href={'/'}>*/}
+          {/*    Domů*/}
+          {/*    <IoMdHome className={'-me-0.5 text-2xl'} />*/}
+          {/*  </LinkButton>*/}
+          {/*</li>*/}
           {user && (
             <>
               <li>

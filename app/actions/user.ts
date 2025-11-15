@@ -314,3 +314,30 @@ export async function getAvatar() {
     return null;
   }
 }
+
+export async function addUserToWhitelist(email: string) {
+  const rate = await createOrUpdateRate();
+  if (rate > 5) return 'Zpomal trochu!';
+
+  try {
+    await prisma.userWhitelist.create({
+      data: {
+        email,
+      },
+    });
+  } catch (err: any) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      if (err.code === 'P2002' && err.meta && err.meta.target) {
+        if (!(err.meta.target instanceof Array)) return 'Chyba serveru';
+        if (err.meta.target.includes('email')) {
+          return 'E-Mail je již na whitelistu!';
+        }
+      }
+    }
+
+    console.error(err.stack);
+    return 'Chyba serveru';
+  }
+
+  return true;
+}
