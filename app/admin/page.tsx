@@ -103,8 +103,9 @@ export default async function Admin() {
           <tbody>
             {users.length > 0 &&
               users.map(async (user, index) => {
-                const totalSize = await getUserTotalFilesSize(user.id);
-                const totalSizePercentage = (totalSize || 0 / Number(user.maxStorage)) * 100;
+                const totalSize = (await getUserTotalFilesSize(user.id)) ?? 0;
+                const limit = Number(user.maxStorage) || 1;
+                const totalSizePercentage = (totalSize / limit) * 100;
 
                 return (
                   <tr className={`bg-alt-gray-200 ${index < users.length - 1 ? 'border-b-2' : ''} border-alt-gray-250`} key={user.id}>

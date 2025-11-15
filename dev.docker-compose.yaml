@@ -1,0 +1,25 @@
+services:
+  void-panel:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+      args:
+        - BASE_URL=${BASE_URL}
+        - SERVER_HOST=${SERVER_HOST}
+        - DATABASE_URL=${DATABASE_URL}
+        - SESSION_SECRET=${SESSION_SECRET}
+        - REDIS_PASSWORD=${REDIS_PASSWORD}
+        - REDIS_PORT=${REDIS_PORT}
+        - FILE_ENCRYPTION_KEY=${FILE_ENCRYPTION_KEY}
+    deploy:
+      resources:
+        limits:
+          memory: 1024MB
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./share:/app/share
+      - ./avatars:/app/avatars
+    env_file:
+      - .env
